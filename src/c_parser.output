@@ -1,0 +1,2947 @@
+Terminals unused in grammar
+
+   tStringLiteral
+   tCharacterConstant
+   tFloatingConstant
+   tSizeof
+   tAuto
+   tChar
+   tConst
+   tDo
+   tDouble
+   tExtern
+   tFloat
+   tGoTo
+   tLong
+   tRegister
+   tShort
+   tSigned
+   tStatic
+   tTypedef
+   tUnion
+   tUnsigned
+   tVoid
+   tVolatile
+   tDot
+   tExMark
+   tDivison
+   tHash
+   tQuesMark
+   tTilde
+   tStruct
+   tAssOperator
+   tDotDotDot
+   tMoreMoreEqual
+   tLessLessEqual
+
+
+Rules useless in parser due to conflicts
+
+  102 ARGUMENTS: tLBracket tRBracket
+
+
+State 22 conflicts: 2 reduce/reduce
+State 42 conflicts: 1 shift/reduce
+State 43 conflicts: 1 shift/reduce
+State 44 conflicts: 1 shift/reduce
+State 98 conflicts: 1 shift/reduce
+State 99 conflicts: 1 shift/reduce
+State 100 conflicts: 1 shift/reduce
+State 101 conflicts: 6 shift/reduce
+State 109 conflicts: 36 reduce/reduce
+State 115 conflicts: 1 shift/reduce
+State 152 conflicts: 1 shift/reduce
+State 162 conflicts: 2 reduce/reduce
+State 163 conflicts: 2 reduce/reduce
+State 166 conflicts: 6 shift/reduce
+State 171 conflicts: 11 shift/reduce
+State 176 conflicts: 11 shift/reduce
+
+
+Grammar
+
+    0 $accept: ROOT $end
+
+    1 ROOT: PROGRAMS
+
+    2 PROGRAMS: PROGRAM
+    3         | PROGRAMS PROGRAM
+
+    4 PROGRAM: FUNCTION
+    5        | FUNCTION_DECLARATION
+    6        | DECLARATION_STATEMENT
+    7        | ARRAY_DECL
+    8        | ASSIGNMENT_STATEMENT
+    9        | ENUM_STATEMENT
+
+   10 FUNCTION: TYPES tIdentifier PARAMETERS tOScope STATEMENTS tCScope
+
+   11 STATEMENTS: STATEMENT
+   12           | STATEMENTS STATEMENT
+
+   13 STATEMENT: ASSIGNMENT_STATEMENT
+   14          | LOOP_STATEMENT
+   15          | IFELSE_STATEMENT
+   16          | FUNCTION_CALL tSemiColon
+   17          | END_STATEMENT
+   18          | CASE_STATEMENT
+   19          | DECLARATION_STATEMENT
+   20          | ARRAY_DECL
+
+   21 ENUM_STATEMENT: tEnum tIdentifier tOScope ENUM_VARIABLES tCScope tSemiColon
+
+   22 ENUM_VARIABLES: IDENTIFIER
+   23               | ASSIGNMENT_STATEMENT
+   24               | ENUM_VARIABLES tComma IDENTIFIER
+   25               | ENUM_VARIABLES tComma ASSIGNMENT_STATEMENT
+
+   26 DECLARATION_STATEMENT: TYPES IDENTIFIER tSemiColon
+
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   28                     | IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION
+   30                     | IDENTIFIER UNARY_OPERATORS tSemiColon
+   31                     | IDENTIFIER UNARY_OPERATORS
+
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope
+   33               | tWhile tLBracket CONDITION tRBracket tOScope tCScope
+   34               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope
+   37                 | tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+   38                 | tSwitch tLBracket IDENTIFIER tRBracket tOScope STATEMENTS tCScope
+
+   39 CASE_STATEMENT: tCase PRIMARY_EXPRESSION tColon STATEMENTS
+   40               | tDefault tColon STATEMENTS
+
+   41 CONDITION: IDENTIFIER CONDITIONERS PRIMARY_EXPRESSION
+   42          | IDENTIFIER CONDITIONERS IDENTIFIER
+   43          | tIdentifier
+   44          | tIntegerConstant
+   45          | CONDITIONAL_EXPRESSION
+
+   46 CONDITIONAL_EXPRESSION: BOOLEAN_OR
+
+   47 BOOLEAN_OR: BOOLEAN_OR tPipePipe BOOLEAN_AND
+   48           | BOOLEAN_AND
+
+   49 BOOLEAN_AND: BOOLEAN_AND tAndAnd BITWISE_OR
+   50            | BOOL_EXPRESSION
+
+   51 BOOL_EXPRESSION: BOOL_EXPRESSION CONDITIONERS BITWISE_OR
+   52                | BITWISE_OR
+
+   53 BITWISE_OR: BITWISE_OR tPipe BITWISE_XOR
+   54           | BITWISE_XOR
+
+   55 BITWISE_XOR: BITWISE_XOR tXor BITWISE_AND
+   56            | BITWISE_AND
+
+   57 BITWISE_AND: BITWISE_AND tAnd BOOL_EXPRESSION
+   58            | SHIFT_EXPRESSION
+
+   59 SHIFT_EXPRESSION: SHIFT_EXPRESSION tLessLess PLUS_MINUS_EXPRESSION
+   60                 | SHIFT_EXPRESSION tMoreMore PLUS_MINUS_EXPRESSION
+   61                 | PLUS_MINUS_EXPRESSION
+
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION tPlus MULTIPLICATIVE_EXPRESSION
+   63                      | PLUS_MINUS_EXPRESSION tMinus MULTIPLICATIVE_EXPRESSION
+   64                      | MULTIPLICATIVE_EXPRESSION
+
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tMultiply UNIT_EXPRESSION
+   66                          | MULTIPLICATIVE_EXPRESSION tDivision UNIT_EXPRESSION
+   67                          | MULTIPLICATIVE_EXPRESSION tModulo UNIT_EXPRESSION
+   68                          | UNIT_EXPRESSION
+
+   69 UNIT_EXPRESSION: PRIMARY_EXPRESSION
+   70                | IDENTIFIER
+   71                | FUNCTION_CALL
+
+   72 FUNCTION_CALL: IDENTIFIER tLBracket tRBracket
+   73              | IDENTIFIER ARGUMENTS
+
+   74 FUNCTION_DECLARATION: TYPES tIdentifier PARAMETERS tSemiColon
+
+   75 ARRAY_DECL: TYPES tIdentifier tLSBracket tIntegerConstant tRSBracket tSemiColon
+
+   76 ARRAY_CALL: tIdentifier tLSBracket tIntegerConstant tRSBracket
+
+   77 PRIMARY_EXPRESSION: tIntegerConstant
+
+   78 IDENTIFIER: tIdentifier
+   79           | ARRAY_CALL
+
+   80 CONDITIONERS: tLess
+   81             | tMore
+   82             | tMoreEqual
+   83             | tLessEqual
+   84             | tEqualEqual
+   85             | tExMarkEqual
+
+   86 OPERATORS: tEqual
+   87          | tPlusEqual
+   88          | tMinusEqual
+   89          | tModuloEqual
+   90          | tDivisionEqual
+   91          | tMultiplyEqual
+   92          | tXorEqual
+   93          | tAndEqual
+   94          | tPipeEqual
+   95          | tPlusPlus
+
+   96 UNARY_OPERATORS: tPlusPlus
+   97                | tMinusMinus
+
+   98 PARAMETERS: tLBracket tRBracket
+   99           | tLBracket PARAMETERS_LIST tRBracket
+
+  100 PARAMETERS_LIST: TYPES tIdentifier
+  101                | PARAMETERS_LIST tComma TYPES tIdentifier
+
+  102 ARGUMENTS: tLBracket tRBracket
+  103          | tLBracket ARGUMENTS_LIST tRBracket
+
+  104 ARGUMENTS_LIST: CONDITIONAL_EXPRESSION
+  105               | ARGUMENTS_LIST tComma CONDITIONAL_EXPRESSION
+
+  106 END_STATEMENT: tReturn CONDITIONAL_EXPRESSION tSemiColon
+  107              | tReturn FUNCTION_CALL tSemiColon
+  108              | tBreak tSemiColon
+  109              | tContinue tSemiColon
+
+  110 TYPES: tInt
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+tInt (258) 110
+tDivision (259) 66
+tPipeEqual (260) 94
+tDivisionEqual (261) 90
+tStringLiteral (262)
+tIdentifier (263) 10 21 43 74 75 76 78 100 101
+tIntegerConstant (264) 44 75 76 77
+tCharacterConstant (265)
+tFloatingConstant (266)
+tFor (267) 34 35
+tWhile (268) 32 33
+tSizeof (269)
+tAuto (270)
+tBreak (271) 108
+tCase (272) 39
+tChar (273)
+tConst (274)
+tContinue (275) 109
+tDo (276)
+tDouble (277)
+tElse (278) 37
+tEnum (279) 21
+tExtern (280)
+tFloat (281)
+tGoTo (282)
+tIf (283) 36 37
+tLong (284)
+tRegister (285)
+tReturn (286) 106 107
+tShort (287)
+tSigned (288)
+tStatic (289)
+tDefault (290) 40
+tSwitch (291) 38
+tTypedef (292)
+tUnion (293)
+tUnsigned (294)
+tVoid (295)
+tVolatile (296)
+tPipe (297) 53
+tLBracket (298) 32 33 34 35 36 37 38 72 98 99 102 103
+tRBracket (299) 32 33 34 35 36 37 38 72 98 99 102 103
+tDot (300)
+tExMark (301)
+tPlus (302) 62
+tMinus (303) 63
+tPlusPlus (304) 95 96
+tMinusMinus (305) 97
+tLSBracket (306) 75 76
+tRSBracket (307) 75 76
+tMore (308) 81
+tAnd (309) 57
+tDivison (310)
+tModulo (311) 67
+tXor (312) 55
+tMultiply (313) 65
+tComma (314) 24 25 101 105
+tHash (315)
+tQuesMark (316)
+tColon (317) 39 40
+tTilde (318)
+tStruct (319)
+tSemiColon (320) 16 21 26 27 28 30 34 35 74 75 106 107 108 109
+tCScope (321) 10 21 32 33 34 35 36 37 38
+tOScope (322) 10 21 32 33 34 35 36 37 38
+tAndAnd (323) 49
+tPipePipe (324) 47
+tAssOperator (325)
+tExMarkEqual (326) 85
+tEqualEqual (327) 84
+tMoreEqual (328) 82
+tLessEqual (329) 83
+tMoreMore (330) 60
+tLessLess (331) 59
+tMinusEqual (332) 88
+tPlusEqual (333) 87
+tModuloEqual (334) 89
+tMultiplyEqual (335) 91
+tEqual (336) 86
+tXorEqual (337) 92
+tAndEqual (338) 93
+tDotDotDot (339)
+tMoreMoreEqual (340)
+tLessLessEqual (341)
+tLess (342) 80
+
+
+Nonterminals, with rules where they appear
+
+$accept (88)
+    on left: 0
+ROOT (89)
+    on left: 1, on right: 0
+PROGRAMS (90)
+    on left: 2 3, on right: 1 3
+PROGRAM (91)
+    on left: 4 5 6 7 8 9, on right: 2 3
+FUNCTION (92)
+    on left: 10, on right: 4
+STATEMENTS (93)
+    on left: 11 12, on right: 10 12 32 36 37 38 39 40
+STATEMENT (94)
+    on left: 13 14 15 16 17 18 19 20, on right: 11 12 34
+ENUM_STATEMENT (95)
+    on left: 21, on right: 9
+ENUM_VARIABLES (96)
+    on left: 22 23 24 25, on right: 21 24 25
+DECLARATION_STATEMENT (97)
+    on left: 26, on right: 6 19
+ASSIGNMENT_STATEMENT (98)
+    on left: 27 28 29 30 31, on right: 8 13 23 25 34 35
+LOOP_STATEMENT (99)
+    on left: 32 33 34 35, on right: 14
+IFELSE_STATEMENT (100)
+    on left: 36 37 38, on right: 15
+CASE_STATEMENT (101)
+    on left: 39 40, on right: 18
+CONDITION (102)
+    on left: 41 42 43 44 45, on right: 32 33 34 35 36 37
+CONDITIONAL_EXPRESSION (103)
+    on left: 46, on right: 27 28 29 45 104 105 106
+BOOLEAN_OR (104)
+    on left: 47 48, on right: 46 47
+BOOLEAN_AND (105)
+    on left: 49 50, on right: 47 48 49
+BOOL_EXPRESSION (106)
+    on left: 51 52, on right: 50 51 57
+BITWISE_OR (107)
+    on left: 53 54, on right: 49 51 52 53
+BITWISE_XOR (108)
+    on left: 55 56, on right: 53 54 55
+BITWISE_AND (109)
+    on left: 57 58, on right: 55 56 57
+SHIFT_EXPRESSION (110)
+    on left: 59 60 61, on right: 58 59 60
+PLUS_MINUS_EXPRESSION (111)
+    on left: 62 63 64, on right: 59 60 61 62 63
+MULTIPLICATIVE_EXPRESSION (112)
+    on left: 65 66 67 68, on right: 62 63 64 65 66 67
+UNIT_EXPRESSION (113)
+    on left: 69 70 71, on right: 65 66 67 68
+FUNCTION_CALL (114)
+    on left: 72 73, on right: 16 71 107
+FUNCTION_DECLARATION (115)
+    on left: 74, on right: 5
+ARRAY_DECL (116)
+    on left: 75, on right: 7 20
+ARRAY_CALL (117)
+    on left: 76, on right: 79
+PRIMARY_EXPRESSION (118)
+    on left: 77, on right: 39 41 69
+IDENTIFIER (119)
+    on left: 78 79, on right: 22 24 26 27 28 29 30 31 38 41 42 70 72
+    73
+CONDITIONERS (120)
+    on left: 80 81 82 83 84 85, on right: 41 42 51
+OPERATORS (121)
+    on left: 86 87 88 89 90 91 92 93 94 95, on right: 27 28 29
+UNARY_OPERATORS (122)
+    on left: 96 97, on right: 30 31
+PARAMETERS (123)
+    on left: 98 99, on right: 10 74
+PARAMETERS_LIST (124)
+    on left: 100 101, on right: 99 101
+ARGUMENTS (125)
+    on left: 102 103, on right: 73
+ARGUMENTS_LIST (126)
+    on left: 104 105, on right: 103 105
+END_STATEMENT (127)
+    on left: 106 107 108 109, on right: 17
+TYPES (128)
+    on left: 110, on right: 10 26 27 74 75 100 101
+
+
+State 0
+
+    0 $accept: . ROOT $end
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tEnum        shift, and go to state 3
+
+    ROOT                   go to state 4
+    PROGRAMS               go to state 5
+    PROGRAM                go to state 6
+    FUNCTION               go to state 7
+    ENUM_STATEMENT         go to state 8
+    DECLARATION_STATEMENT  go to state 9
+    ASSIGNMENT_STATEMENT   go to state 10
+    FUNCTION_DECLARATION   go to state 11
+    ARRAY_DECL             go to state 12
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 14
+    TYPES                  go to state 15
+
+
+State 1
+
+  110 TYPES: tInt .
+
+    $default  reduce using rule 110 (TYPES)
+
+
+State 2
+
+   76 ARRAY_CALL: tIdentifier . tLSBracket tIntegerConstant tRSBracket
+   78 IDENTIFIER: tIdentifier .
+
+    tLSBracket  shift, and go to state 16
+
+    $default  reduce using rule 78 (IDENTIFIER)
+
+
+State 3
+
+   21 ENUM_STATEMENT: tEnum . tIdentifier tOScope ENUM_VARIABLES tCScope tSemiColon
+
+    tIdentifier  shift, and go to state 17
+
+
+State 4
+
+    0 $accept: ROOT . $end
+
+    $end  shift, and go to state 18
+
+
+State 5
+
+    1 ROOT: PROGRAMS .
+    3 PROGRAMS: PROGRAMS . PROGRAM
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tEnum        shift, and go to state 3
+
+    $default  reduce using rule 1 (ROOT)
+
+    PROGRAM                go to state 19
+    FUNCTION               go to state 7
+    ENUM_STATEMENT         go to state 8
+    DECLARATION_STATEMENT  go to state 9
+    ASSIGNMENT_STATEMENT   go to state 10
+    FUNCTION_DECLARATION   go to state 11
+    ARRAY_DECL             go to state 12
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 14
+    TYPES                  go to state 15
+
+
+State 6
+
+    2 PROGRAMS: PROGRAM .
+
+    $default  reduce using rule 2 (PROGRAMS)
+
+
+State 7
+
+    4 PROGRAM: FUNCTION .
+
+    $default  reduce using rule 4 (PROGRAM)
+
+
+State 8
+
+    9 PROGRAM: ENUM_STATEMENT .
+
+    $default  reduce using rule 9 (PROGRAM)
+
+
+State 9
+
+    6 PROGRAM: DECLARATION_STATEMENT .
+
+    $default  reduce using rule 6 (PROGRAM)
+
+
+State 10
+
+    8 PROGRAM: ASSIGNMENT_STATEMENT .
+
+    $default  reduce using rule 8 (PROGRAM)
+
+
+State 11
+
+    5 PROGRAM: FUNCTION_DECLARATION .
+
+    $default  reduce using rule 5 (PROGRAM)
+
+
+State 12
+
+    7 PROGRAM: ARRAY_DECL .
+
+    $default  reduce using rule 7 (PROGRAM)
+
+
+State 13
+
+   79 IDENTIFIER: ARRAY_CALL .
+
+    $default  reduce using rule 79 (IDENTIFIER)
+
+
+State 14
+
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION
+   30                     | IDENTIFIER . UNARY_OPERATORS tSemiColon
+   31                     | IDENTIFIER . UNARY_OPERATORS
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tPlusPlus       shift, and go to state 22
+    tMinusMinus     shift, and go to state 23
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    OPERATORS        go to state 31
+    UNARY_OPERATORS  go to state 32
+
+
+State 15
+
+   10 FUNCTION: TYPES . tIdentifier PARAMETERS tOScope STATEMENTS tCScope
+   26 DECLARATION_STATEMENT: TYPES . IDENTIFIER tSemiColon
+   27 ASSIGNMENT_STATEMENT: TYPES . IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   74 FUNCTION_DECLARATION: TYPES . tIdentifier PARAMETERS tSemiColon
+   75 ARRAY_DECL: TYPES . tIdentifier tLSBracket tIntegerConstant tRSBracket tSemiColon
+
+    tIdentifier  shift, and go to state 33
+
+    ARRAY_CALL  go to state 13
+    IDENTIFIER  go to state 34
+
+
+State 16
+
+   76 ARRAY_CALL: tIdentifier tLSBracket . tIntegerConstant tRSBracket
+
+    tIntegerConstant  shift, and go to state 35
+
+
+State 17
+
+   21 ENUM_STATEMENT: tEnum tIdentifier . tOScope ENUM_VARIABLES tCScope tSemiColon
+
+    tOScope  shift, and go to state 36
+
+
+State 18
+
+    0 $accept: ROOT $end .
+
+    $default  accept
+
+
+State 19
+
+    3 PROGRAMS: PROGRAMS PROGRAM .
+
+    $default  reduce using rule 3 (PROGRAMS)
+
+
+State 20
+
+   94 OPERATORS: tPipeEqual .
+
+    $default  reduce using rule 94 (OPERATORS)
+
+
+State 21
+
+   90 OPERATORS: tDivisionEqual .
+
+    $default  reduce using rule 90 (OPERATORS)
+
+
+State 22
+
+   95 OPERATORS: tPlusPlus .
+   96 UNARY_OPERATORS: tPlusPlus .
+
+    tIdentifier       reduce using rule 95 (OPERATORS)
+    tIdentifier       [reduce using rule 96 (UNARY_OPERATORS)]
+    tIntegerConstant  reduce using rule 95 (OPERATORS)
+    tIntegerConstant  [reduce using rule 96 (UNARY_OPERATORS)]
+    $default          reduce using rule 96 (UNARY_OPERATORS)
+
+
+State 23
+
+   97 UNARY_OPERATORS: tMinusMinus .
+
+    $default  reduce using rule 97 (UNARY_OPERATORS)
+
+
+State 24
+
+   88 OPERATORS: tMinusEqual .
+
+    $default  reduce using rule 88 (OPERATORS)
+
+
+State 25
+
+   87 OPERATORS: tPlusEqual .
+
+    $default  reduce using rule 87 (OPERATORS)
+
+
+State 26
+
+   89 OPERATORS: tModuloEqual .
+
+    $default  reduce using rule 89 (OPERATORS)
+
+
+State 27
+
+   91 OPERATORS: tMultiplyEqual .
+
+    $default  reduce using rule 91 (OPERATORS)
+
+
+State 28
+
+   86 OPERATORS: tEqual .
+
+    $default  reduce using rule 86 (OPERATORS)
+
+
+State 29
+
+   92 OPERATORS: tXorEqual .
+
+    $default  reduce using rule 92 (OPERATORS)
+
+
+State 30
+
+   93 OPERATORS: tAndEqual .
+
+    $default  reduce using rule 93 (OPERATORS)
+
+
+State 31
+
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER OPERATORS . CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER OPERATORS . CONDITIONAL_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    CONDITIONAL_EXPRESSION     go to state 38
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 32
+
+   30 ASSIGNMENT_STATEMENT: IDENTIFIER UNARY_OPERATORS . tSemiColon
+   31                     | IDENTIFIER UNARY_OPERATORS .
+
+    tSemiColon  shift, and go to state 52
+
+    $default  reduce using rule 31 (ASSIGNMENT_STATEMENT)
+
+
+State 33
+
+   10 FUNCTION: TYPES tIdentifier . PARAMETERS tOScope STATEMENTS tCScope
+   74 FUNCTION_DECLARATION: TYPES tIdentifier . PARAMETERS tSemiColon
+   75 ARRAY_DECL: TYPES tIdentifier . tLSBracket tIntegerConstant tRSBracket tSemiColon
+   76 ARRAY_CALL: tIdentifier . tLSBracket tIntegerConstant tRSBracket
+   78 IDENTIFIER: tIdentifier .
+
+    tLBracket   shift, and go to state 53
+    tLSBracket  shift, and go to state 54
+
+    $default  reduce using rule 78 (IDENTIFIER)
+
+    PARAMETERS  go to state 55
+
+
+State 34
+
+   26 DECLARATION_STATEMENT: TYPES IDENTIFIER . tSemiColon
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tPlusPlus       shift, and go to state 56
+    tSemiColon      shift, and go to state 57
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    OPERATORS  go to state 58
+
+
+State 35
+
+   76 ARRAY_CALL: tIdentifier tLSBracket tIntegerConstant . tRSBracket
+
+    tRSBracket  shift, and go to state 59
+
+
+State 36
+
+   21 ENUM_STATEMENT: tEnum tIdentifier tOScope . ENUM_VARIABLES tCScope tSemiColon
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+
+    ENUM_VARIABLES        go to state 60
+    ASSIGNMENT_STATEMENT  go to state 61
+    ARRAY_CALL            go to state 13
+    IDENTIFIER            go to state 62
+    TYPES                 go to state 63
+
+
+State 37
+
+   77 PRIMARY_EXPRESSION: tIntegerConstant .
+
+    $default  reduce using rule 77 (PRIMARY_EXPRESSION)
+
+
+State 38
+
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION . tSemiColon
+   29                     | IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION .
+
+    tSemiColon  shift, and go to state 64
+
+    $default  reduce using rule 29 (ASSIGNMENT_STATEMENT)
+
+
+State 39
+
+   46 CONDITIONAL_EXPRESSION: BOOLEAN_OR .
+   47 BOOLEAN_OR: BOOLEAN_OR . tPipePipe BOOLEAN_AND
+
+    tPipePipe  shift, and go to state 65
+
+    $default  reduce using rule 46 (CONDITIONAL_EXPRESSION)
+
+
+State 40
+
+   48 BOOLEAN_OR: BOOLEAN_AND .
+   49 BOOLEAN_AND: BOOLEAN_AND . tAndAnd BITWISE_OR
+
+    tAndAnd  shift, and go to state 66
+
+    $default  reduce using rule 48 (BOOLEAN_OR)
+
+
+State 41
+
+   50 BOOLEAN_AND: BOOL_EXPRESSION .
+   51 BOOL_EXPRESSION: BOOL_EXPRESSION . CONDITIONERS BITWISE_OR
+
+    tMore         shift, and go to state 67
+    tExMarkEqual  shift, and go to state 68
+    tEqualEqual   shift, and go to state 69
+    tMoreEqual    shift, and go to state 70
+    tLessEqual    shift, and go to state 71
+    tLess         shift, and go to state 72
+
+    $default  reduce using rule 50 (BOOLEAN_AND)
+
+    CONDITIONERS  go to state 73
+
+
+State 42
+
+   52 BOOL_EXPRESSION: BITWISE_OR .
+   53 BITWISE_OR: BITWISE_OR . tPipe BITWISE_XOR
+
+    tPipe  shift, and go to state 74
+
+    tPipe     [reduce using rule 52 (BOOL_EXPRESSION)]
+    $default  reduce using rule 52 (BOOL_EXPRESSION)
+
+
+State 43
+
+   54 BITWISE_OR: BITWISE_XOR .
+   55 BITWISE_XOR: BITWISE_XOR . tXor BITWISE_AND
+
+    tXor  shift, and go to state 75
+
+    tXor      [reduce using rule 54 (BITWISE_OR)]
+    $default  reduce using rule 54 (BITWISE_OR)
+
+
+State 44
+
+   56 BITWISE_XOR: BITWISE_AND .
+   57 BITWISE_AND: BITWISE_AND . tAnd BOOL_EXPRESSION
+
+    tAnd  shift, and go to state 76
+
+    tAnd      [reduce using rule 56 (BITWISE_XOR)]
+    $default  reduce using rule 56 (BITWISE_XOR)
+
+
+State 45
+
+   58 BITWISE_AND: SHIFT_EXPRESSION .
+   59 SHIFT_EXPRESSION: SHIFT_EXPRESSION . tLessLess PLUS_MINUS_EXPRESSION
+   60                 | SHIFT_EXPRESSION . tMoreMore PLUS_MINUS_EXPRESSION
+
+    tMoreMore  shift, and go to state 77
+    tLessLess  shift, and go to state 78
+
+    $default  reduce using rule 58 (BITWISE_AND)
+
+
+State 46
+
+   61 SHIFT_EXPRESSION: PLUS_MINUS_EXPRESSION .
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION . tPlus MULTIPLICATIVE_EXPRESSION
+   63                      | PLUS_MINUS_EXPRESSION . tMinus MULTIPLICATIVE_EXPRESSION
+
+    tPlus   shift, and go to state 79
+    tMinus  shift, and go to state 80
+
+    $default  reduce using rule 61 (SHIFT_EXPRESSION)
+
+
+State 47
+
+   64 PLUS_MINUS_EXPRESSION: MULTIPLICATIVE_EXPRESSION .
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION . tMultiply UNIT_EXPRESSION
+   66                          | MULTIPLICATIVE_EXPRESSION . tDivision UNIT_EXPRESSION
+   67                          | MULTIPLICATIVE_EXPRESSION . tModulo UNIT_EXPRESSION
+
+    tDivision  shift, and go to state 81
+    tModulo    shift, and go to state 82
+    tMultiply  shift, and go to state 83
+
+    $default  reduce using rule 64 (PLUS_MINUS_EXPRESSION)
+
+
+State 48
+
+   68 MULTIPLICATIVE_EXPRESSION: UNIT_EXPRESSION .
+
+    $default  reduce using rule 68 (MULTIPLICATIVE_EXPRESSION)
+
+
+State 49
+
+   71 UNIT_EXPRESSION: FUNCTION_CALL .
+
+    $default  reduce using rule 71 (UNIT_EXPRESSION)
+
+
+State 50
+
+   69 UNIT_EXPRESSION: PRIMARY_EXPRESSION .
+
+    $default  reduce using rule 69 (UNIT_EXPRESSION)
+
+
+State 51
+
+   70 UNIT_EXPRESSION: IDENTIFIER .
+   72 FUNCTION_CALL: IDENTIFIER . tLBracket tRBracket
+   73              | IDENTIFIER . ARGUMENTS
+
+    tLBracket  shift, and go to state 84
+
+    $default  reduce using rule 70 (UNIT_EXPRESSION)
+
+    ARGUMENTS  go to state 85
+
+
+State 52
+
+   30 ASSIGNMENT_STATEMENT: IDENTIFIER UNARY_OPERATORS tSemiColon .
+
+    $default  reduce using rule 30 (ASSIGNMENT_STATEMENT)
+
+
+State 53
+
+   98 PARAMETERS: tLBracket . tRBracket
+   99           | tLBracket . PARAMETERS_LIST tRBracket
+
+    tInt       shift, and go to state 1
+    tRBracket  shift, and go to state 86
+
+    PARAMETERS_LIST  go to state 87
+    TYPES            go to state 88
+
+
+State 54
+
+   75 ARRAY_DECL: TYPES tIdentifier tLSBracket . tIntegerConstant tRSBracket tSemiColon
+   76 ARRAY_CALL: tIdentifier tLSBracket . tIntegerConstant tRSBracket
+
+    tIntegerConstant  shift, and go to state 89
+
+
+State 55
+
+   10 FUNCTION: TYPES tIdentifier PARAMETERS . tOScope STATEMENTS tCScope
+   74 FUNCTION_DECLARATION: TYPES tIdentifier PARAMETERS . tSemiColon
+
+    tSemiColon  shift, and go to state 90
+    tOScope     shift, and go to state 91
+
+
+State 56
+
+   95 OPERATORS: tPlusPlus .
+
+    $default  reduce using rule 95 (OPERATORS)
+
+
+State 57
+
+   26 DECLARATION_STATEMENT: TYPES IDENTIFIER tSemiColon .
+
+    $default  reduce using rule 26 (DECLARATION_STATEMENT)
+
+
+State 58
+
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER OPERATORS . CONDITIONAL_EXPRESSION tSemiColon
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    CONDITIONAL_EXPRESSION     go to state 92
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 59
+
+   76 ARRAY_CALL: tIdentifier tLSBracket tIntegerConstant tRSBracket .
+
+    $default  reduce using rule 76 (ARRAY_CALL)
+
+
+State 60
+
+   21 ENUM_STATEMENT: tEnum tIdentifier tOScope ENUM_VARIABLES . tCScope tSemiColon
+   24 ENUM_VARIABLES: ENUM_VARIABLES . tComma IDENTIFIER
+   25               | ENUM_VARIABLES . tComma ASSIGNMENT_STATEMENT
+
+    tComma   shift, and go to state 93
+    tCScope  shift, and go to state 94
+
+
+State 61
+
+   23 ENUM_VARIABLES: ASSIGNMENT_STATEMENT .
+
+    $default  reduce using rule 23 (ENUM_VARIABLES)
+
+
+State 62
+
+   22 ENUM_VARIABLES: IDENTIFIER .
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION
+   30                     | IDENTIFIER . UNARY_OPERATORS tSemiColon
+   31                     | IDENTIFIER . UNARY_OPERATORS
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tPlusPlus       shift, and go to state 22
+    tMinusMinus     shift, and go to state 23
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    $default  reduce using rule 22 (ENUM_VARIABLES)
+
+    OPERATORS        go to state 31
+    UNARY_OPERATORS  go to state 32
+
+
+State 63
+
+   27 ASSIGNMENT_STATEMENT: TYPES . IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+
+    tIdentifier  shift, and go to state 2
+
+    ARRAY_CALL  go to state 13
+    IDENTIFIER  go to state 95
+
+
+State 64
+
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon .
+
+    $default  reduce using rule 28 (ASSIGNMENT_STATEMENT)
+
+
+State 65
+
+   47 BOOLEAN_OR: BOOLEAN_OR tPipePipe . BOOLEAN_AND
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BOOLEAN_AND                go to state 96
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 66
+
+   49 BOOLEAN_AND: BOOLEAN_AND tAndAnd . BITWISE_OR
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BITWISE_OR                 go to state 97
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 67
+
+   81 CONDITIONERS: tMore .
+
+    $default  reduce using rule 81 (CONDITIONERS)
+
+
+State 68
+
+   85 CONDITIONERS: tExMarkEqual .
+
+    $default  reduce using rule 85 (CONDITIONERS)
+
+
+State 69
+
+   84 CONDITIONERS: tEqualEqual .
+
+    $default  reduce using rule 84 (CONDITIONERS)
+
+
+State 70
+
+   82 CONDITIONERS: tMoreEqual .
+
+    $default  reduce using rule 82 (CONDITIONERS)
+
+
+State 71
+
+   83 CONDITIONERS: tLessEqual .
+
+    $default  reduce using rule 83 (CONDITIONERS)
+
+
+State 72
+
+   80 CONDITIONERS: tLess .
+
+    $default  reduce using rule 80 (CONDITIONERS)
+
+
+State 73
+
+   51 BOOL_EXPRESSION: BOOL_EXPRESSION CONDITIONERS . BITWISE_OR
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BITWISE_OR                 go to state 98
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 74
+
+   53 BITWISE_OR: BITWISE_OR tPipe . BITWISE_XOR
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BITWISE_XOR                go to state 99
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 75
+
+   55 BITWISE_XOR: BITWISE_XOR tXor . BITWISE_AND
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BITWISE_AND                go to state 100
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 76
+
+   57 BITWISE_AND: BITWISE_AND tAnd . BOOL_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    BOOL_EXPRESSION            go to state 101
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 77
+
+   60 SHIFT_EXPRESSION: SHIFT_EXPRESSION tMoreMore . PLUS_MINUS_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    PLUS_MINUS_EXPRESSION      go to state 102
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 78
+
+   59 SHIFT_EXPRESSION: SHIFT_EXPRESSION tLessLess . PLUS_MINUS_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    PLUS_MINUS_EXPRESSION      go to state 103
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 79
+
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION tPlus . MULTIPLICATIVE_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    MULTIPLICATIVE_EXPRESSION  go to state 104
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 80
+
+   63 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION tMinus . MULTIPLICATIVE_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    MULTIPLICATIVE_EXPRESSION  go to state 105
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 81
+
+   66 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tDivision . UNIT_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    UNIT_EXPRESSION     go to state 106
+    FUNCTION_CALL       go to state 49
+    ARRAY_CALL          go to state 13
+    PRIMARY_EXPRESSION  go to state 50
+    IDENTIFIER          go to state 51
+
+
+State 82
+
+   67 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tModulo . UNIT_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    UNIT_EXPRESSION     go to state 107
+    FUNCTION_CALL       go to state 49
+    ARRAY_CALL          go to state 13
+    PRIMARY_EXPRESSION  go to state 50
+    IDENTIFIER          go to state 51
+
+
+State 83
+
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tMultiply . UNIT_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    UNIT_EXPRESSION     go to state 108
+    FUNCTION_CALL       go to state 49
+    ARRAY_CALL          go to state 13
+    PRIMARY_EXPRESSION  go to state 50
+    IDENTIFIER          go to state 51
+
+
+State 84
+
+   72 FUNCTION_CALL: IDENTIFIER tLBracket . tRBracket
+  102 ARGUMENTS: tLBracket . tRBracket
+  103          | tLBracket . ARGUMENTS_LIST tRBracket
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+    tRBracket         shift, and go to state 109
+
+    CONDITIONAL_EXPRESSION     go to state 110
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+    ARGUMENTS_LIST             go to state 111
+
+
+State 85
+
+   73 FUNCTION_CALL: IDENTIFIER ARGUMENTS .
+
+    $default  reduce using rule 73 (FUNCTION_CALL)
+
+
+State 86
+
+   98 PARAMETERS: tLBracket tRBracket .
+
+    $default  reduce using rule 98 (PARAMETERS)
+
+
+State 87
+
+   99 PARAMETERS: tLBracket PARAMETERS_LIST . tRBracket
+  101 PARAMETERS_LIST: PARAMETERS_LIST . tComma TYPES tIdentifier
+
+    tRBracket  shift, and go to state 112
+    tComma     shift, and go to state 113
+
+
+State 88
+
+  100 PARAMETERS_LIST: TYPES . tIdentifier
+
+    tIdentifier  shift, and go to state 114
+
+
+State 89
+
+   75 ARRAY_DECL: TYPES tIdentifier tLSBracket tIntegerConstant . tRSBracket tSemiColon
+   76 ARRAY_CALL: tIdentifier tLSBracket tIntegerConstant . tRSBracket
+
+    tRSBracket  shift, and go to state 115
+
+
+State 90
+
+   74 FUNCTION_DECLARATION: TYPES tIdentifier PARAMETERS tSemiColon .
+
+    $default  reduce using rule 74 (FUNCTION_DECLARATION)
+
+
+State 91
+
+   10 FUNCTION: TYPES tIdentifier PARAMETERS tOScope . STATEMENTS tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 125
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 92
+
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION . tSemiColon
+
+    tSemiColon  shift, and go to state 137
+
+
+State 93
+
+   24 ENUM_VARIABLES: ENUM_VARIABLES tComma . IDENTIFIER
+   25               | ENUM_VARIABLES tComma . ASSIGNMENT_STATEMENT
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+
+    ASSIGNMENT_STATEMENT  go to state 138
+    ARRAY_CALL            go to state 13
+    IDENTIFIER            go to state 139
+    TYPES                 go to state 63
+
+
+State 94
+
+   21 ENUM_STATEMENT: tEnum tIdentifier tOScope ENUM_VARIABLES tCScope . tSemiColon
+
+    tSemiColon  shift, and go to state 140
+
+
+State 95
+
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tPlusPlus       shift, and go to state 56
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    OPERATORS  go to state 58
+
+
+State 96
+
+   47 BOOLEAN_OR: BOOLEAN_OR tPipePipe BOOLEAN_AND .
+   49 BOOLEAN_AND: BOOLEAN_AND . tAndAnd BITWISE_OR
+
+    tAndAnd  shift, and go to state 66
+
+    $default  reduce using rule 47 (BOOLEAN_OR)
+
+
+State 97
+
+   49 BOOLEAN_AND: BOOLEAN_AND tAndAnd BITWISE_OR .
+   53 BITWISE_OR: BITWISE_OR . tPipe BITWISE_XOR
+
+    tPipe  shift, and go to state 74
+
+    $default  reduce using rule 49 (BOOLEAN_AND)
+
+
+State 98
+
+   51 BOOL_EXPRESSION: BOOL_EXPRESSION CONDITIONERS BITWISE_OR .
+   53 BITWISE_OR: BITWISE_OR . tPipe BITWISE_XOR
+
+    tPipe  shift, and go to state 74
+
+    tPipe     [reduce using rule 51 (BOOL_EXPRESSION)]
+    $default  reduce using rule 51 (BOOL_EXPRESSION)
+
+
+State 99
+
+   53 BITWISE_OR: BITWISE_OR tPipe BITWISE_XOR .
+   55 BITWISE_XOR: BITWISE_XOR . tXor BITWISE_AND
+
+    tXor  shift, and go to state 75
+
+    tXor      [reduce using rule 53 (BITWISE_OR)]
+    $default  reduce using rule 53 (BITWISE_OR)
+
+
+State 100
+
+   55 BITWISE_XOR: BITWISE_XOR tXor BITWISE_AND .
+   57 BITWISE_AND: BITWISE_AND . tAnd BOOL_EXPRESSION
+
+    tAnd  shift, and go to state 76
+
+    tAnd      [reduce using rule 55 (BITWISE_XOR)]
+    $default  reduce using rule 55 (BITWISE_XOR)
+
+
+State 101
+
+   51 BOOL_EXPRESSION: BOOL_EXPRESSION . CONDITIONERS BITWISE_OR
+   57 BITWISE_AND: BITWISE_AND tAnd BOOL_EXPRESSION .
+
+    tMore         shift, and go to state 67
+    tExMarkEqual  shift, and go to state 68
+    tEqualEqual   shift, and go to state 69
+    tMoreEqual    shift, and go to state 70
+    tLessEqual    shift, and go to state 71
+    tLess         shift, and go to state 72
+
+    tMore         [reduce using rule 57 (BITWISE_AND)]
+    tExMarkEqual  [reduce using rule 57 (BITWISE_AND)]
+    tEqualEqual   [reduce using rule 57 (BITWISE_AND)]
+    tMoreEqual    [reduce using rule 57 (BITWISE_AND)]
+    tLessEqual    [reduce using rule 57 (BITWISE_AND)]
+    tLess         [reduce using rule 57 (BITWISE_AND)]
+    $default      reduce using rule 57 (BITWISE_AND)
+
+    CONDITIONERS  go to state 73
+
+
+State 102
+
+   60 SHIFT_EXPRESSION: SHIFT_EXPRESSION tMoreMore PLUS_MINUS_EXPRESSION .
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION . tPlus MULTIPLICATIVE_EXPRESSION
+   63                      | PLUS_MINUS_EXPRESSION . tMinus MULTIPLICATIVE_EXPRESSION
+
+    tPlus   shift, and go to state 79
+    tMinus  shift, and go to state 80
+
+    $default  reduce using rule 60 (SHIFT_EXPRESSION)
+
+
+State 103
+
+   59 SHIFT_EXPRESSION: SHIFT_EXPRESSION tLessLess PLUS_MINUS_EXPRESSION .
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION . tPlus MULTIPLICATIVE_EXPRESSION
+   63                      | PLUS_MINUS_EXPRESSION . tMinus MULTIPLICATIVE_EXPRESSION
+
+    tPlus   shift, and go to state 79
+    tMinus  shift, and go to state 80
+
+    $default  reduce using rule 59 (SHIFT_EXPRESSION)
+
+
+State 104
+
+   62 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION tPlus MULTIPLICATIVE_EXPRESSION .
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION . tMultiply UNIT_EXPRESSION
+   66                          | MULTIPLICATIVE_EXPRESSION . tDivision UNIT_EXPRESSION
+   67                          | MULTIPLICATIVE_EXPRESSION . tModulo UNIT_EXPRESSION
+
+    tDivision  shift, and go to state 81
+    tModulo    shift, and go to state 82
+    tMultiply  shift, and go to state 83
+
+    $default  reduce using rule 62 (PLUS_MINUS_EXPRESSION)
+
+
+State 105
+
+   63 PLUS_MINUS_EXPRESSION: PLUS_MINUS_EXPRESSION tMinus MULTIPLICATIVE_EXPRESSION .
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION . tMultiply UNIT_EXPRESSION
+   66                          | MULTIPLICATIVE_EXPRESSION . tDivision UNIT_EXPRESSION
+   67                          | MULTIPLICATIVE_EXPRESSION . tModulo UNIT_EXPRESSION
+
+    tDivision  shift, and go to state 81
+    tModulo    shift, and go to state 82
+    tMultiply  shift, and go to state 83
+
+    $default  reduce using rule 63 (PLUS_MINUS_EXPRESSION)
+
+
+State 106
+
+   66 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tDivision UNIT_EXPRESSION .
+
+    $default  reduce using rule 66 (MULTIPLICATIVE_EXPRESSION)
+
+
+State 107
+
+   67 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tModulo UNIT_EXPRESSION .
+
+    $default  reduce using rule 67 (MULTIPLICATIVE_EXPRESSION)
+
+
+State 108
+
+   65 MULTIPLICATIVE_EXPRESSION: MULTIPLICATIVE_EXPRESSION tMultiply UNIT_EXPRESSION .
+
+    $default  reduce using rule 65 (MULTIPLICATIVE_EXPRESSION)
+
+
+State 109
+
+   72 FUNCTION_CALL: IDENTIFIER tLBracket tRBracket .
+  102 ARGUMENTS: tLBracket tRBracket .
+
+    $end              reduce using rule 72 (FUNCTION_CALL)
+    $end              [reduce using rule 102 (ARGUMENTS)]
+    tInt              reduce using rule 72 (FUNCTION_CALL)
+    tInt              [reduce using rule 102 (ARGUMENTS)]
+    tDivision         reduce using rule 72 (FUNCTION_CALL)
+    tDivision         [reduce using rule 102 (ARGUMENTS)]
+    tIdentifier       reduce using rule 72 (FUNCTION_CALL)
+    tIdentifier       [reduce using rule 102 (ARGUMENTS)]
+    tIntegerConstant  reduce using rule 72 (FUNCTION_CALL)
+    tIntegerConstant  [reduce using rule 102 (ARGUMENTS)]
+    tFor              reduce using rule 72 (FUNCTION_CALL)
+    tFor              [reduce using rule 102 (ARGUMENTS)]
+    tWhile            reduce using rule 72 (FUNCTION_CALL)
+    tWhile            [reduce using rule 102 (ARGUMENTS)]
+    tBreak            reduce using rule 72 (FUNCTION_CALL)
+    tBreak            [reduce using rule 102 (ARGUMENTS)]
+    tCase             reduce using rule 72 (FUNCTION_CALL)
+    tCase             [reduce using rule 102 (ARGUMENTS)]
+    tContinue         reduce using rule 72 (FUNCTION_CALL)
+    tContinue         [reduce using rule 102 (ARGUMENTS)]
+    tEnum             reduce using rule 72 (FUNCTION_CALL)
+    tEnum             [reduce using rule 102 (ARGUMENTS)]
+    tIf               reduce using rule 72 (FUNCTION_CALL)
+    tIf               [reduce using rule 102 (ARGUMENTS)]
+    tReturn           reduce using rule 72 (FUNCTION_CALL)
+    tReturn           [reduce using rule 102 (ARGUMENTS)]
+    tDefault          reduce using rule 72 (FUNCTION_CALL)
+    tDefault          [reduce using rule 102 (ARGUMENTS)]
+    tSwitch           reduce using rule 72 (FUNCTION_CALL)
+    tSwitch           [reduce using rule 102 (ARGUMENTS)]
+    tPipe             reduce using rule 72 (FUNCTION_CALL)
+    tPipe             [reduce using rule 102 (ARGUMENTS)]
+    tRBracket         reduce using rule 72 (FUNCTION_CALL)
+    tRBracket         [reduce using rule 102 (ARGUMENTS)]
+    tPlus             reduce using rule 72 (FUNCTION_CALL)
+    tPlus             [reduce using rule 102 (ARGUMENTS)]
+    tMinus            reduce using rule 72 (FUNCTION_CALL)
+    tMinus            [reduce using rule 102 (ARGUMENTS)]
+    tMore             reduce using rule 72 (FUNCTION_CALL)
+    tMore             [reduce using rule 102 (ARGUMENTS)]
+    tAnd              reduce using rule 72 (FUNCTION_CALL)
+    tAnd              [reduce using rule 102 (ARGUMENTS)]
+    tModulo           reduce using rule 72 (FUNCTION_CALL)
+    tModulo           [reduce using rule 102 (ARGUMENTS)]
+    tXor              reduce using rule 72 (FUNCTION_CALL)
+    tXor              [reduce using rule 102 (ARGUMENTS)]
+    tMultiply         reduce using rule 72 (FUNCTION_CALL)
+    tMultiply         [reduce using rule 102 (ARGUMENTS)]
+    tComma            reduce using rule 72 (FUNCTION_CALL)
+    tComma            [reduce using rule 102 (ARGUMENTS)]
+    tSemiColon        reduce using rule 72 (FUNCTION_CALL)
+    tSemiColon        [reduce using rule 102 (ARGUMENTS)]
+    tCScope           reduce using rule 72 (FUNCTION_CALL)
+    tCScope           [reduce using rule 102 (ARGUMENTS)]
+    tAndAnd           reduce using rule 72 (FUNCTION_CALL)
+    tAndAnd           [reduce using rule 102 (ARGUMENTS)]
+    tPipePipe         reduce using rule 72 (FUNCTION_CALL)
+    tPipePipe         [reduce using rule 102 (ARGUMENTS)]
+    tExMarkEqual      reduce using rule 72 (FUNCTION_CALL)
+    tExMarkEqual      [reduce using rule 102 (ARGUMENTS)]
+    tEqualEqual       reduce using rule 72 (FUNCTION_CALL)
+    tEqualEqual       [reduce using rule 102 (ARGUMENTS)]
+    tMoreEqual        reduce using rule 72 (FUNCTION_CALL)
+    tMoreEqual        [reduce using rule 102 (ARGUMENTS)]
+    tLessEqual        reduce using rule 72 (FUNCTION_CALL)
+    tLessEqual        [reduce using rule 102 (ARGUMENTS)]
+    tMoreMore         reduce using rule 72 (FUNCTION_CALL)
+    tMoreMore         [reduce using rule 102 (ARGUMENTS)]
+    tLessLess         reduce using rule 72 (FUNCTION_CALL)
+    tLessLess         [reduce using rule 102 (ARGUMENTS)]
+    tLess             reduce using rule 72 (FUNCTION_CALL)
+    tLess             [reduce using rule 102 (ARGUMENTS)]
+    $default          reduce using rule 72 (FUNCTION_CALL)
+
+
+State 110
+
+  104 ARGUMENTS_LIST: CONDITIONAL_EXPRESSION .
+
+    $default  reduce using rule 104 (ARGUMENTS_LIST)
+
+
+State 111
+
+  103 ARGUMENTS: tLBracket ARGUMENTS_LIST . tRBracket
+  105 ARGUMENTS_LIST: ARGUMENTS_LIST . tComma CONDITIONAL_EXPRESSION
+
+    tRBracket  shift, and go to state 141
+    tComma     shift, and go to state 142
+
+
+State 112
+
+   99 PARAMETERS: tLBracket PARAMETERS_LIST tRBracket .
+
+    $default  reduce using rule 99 (PARAMETERS)
+
+
+State 113
+
+  101 PARAMETERS_LIST: PARAMETERS_LIST tComma . TYPES tIdentifier
+
+    tInt  shift, and go to state 1
+
+    TYPES  go to state 143
+
+
+State 114
+
+  100 PARAMETERS_LIST: TYPES tIdentifier .
+
+    $default  reduce using rule 100 (PARAMETERS_LIST)
+
+
+State 115
+
+   75 ARRAY_DECL: TYPES tIdentifier tLSBracket tIntegerConstant tRSBracket . tSemiColon
+   76 ARRAY_CALL: tIdentifier tLSBracket tIntegerConstant tRSBracket .
+
+    tSemiColon  shift, and go to state 144
+
+    tSemiColon  [reduce using rule 76 (ARRAY_CALL)]
+    $default    reduce using rule 76 (ARRAY_CALL)
+
+
+State 116
+
+   34 LOOP_STATEMENT: tFor . tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor . tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+    tLBracket  shift, and go to state 145
+
+
+State 117
+
+   32 LOOP_STATEMENT: tWhile . tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope
+   33               | tWhile . tLBracket CONDITION tRBracket tOScope tCScope
+
+    tLBracket  shift, and go to state 146
+
+
+State 118
+
+  108 END_STATEMENT: tBreak . tSemiColon
+
+    tSemiColon  shift, and go to state 147
+
+
+State 119
+
+   39 CASE_STATEMENT: tCase . PRIMARY_EXPRESSION tColon STATEMENTS
+
+    tIntegerConstant  shift, and go to state 37
+
+    PRIMARY_EXPRESSION  go to state 148
+
+
+State 120
+
+  109 END_STATEMENT: tContinue . tSemiColon
+
+    tSemiColon  shift, and go to state 149
+
+
+State 121
+
+   36 IFELSE_STATEMENT: tIf . tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope
+   37                 | tIf . tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+
+    tLBracket  shift, and go to state 150
+
+
+State 122
+
+  106 END_STATEMENT: tReturn . CONDITIONAL_EXPRESSION tSemiColon
+  107              | tReturn . FUNCTION_CALL tSemiColon
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    CONDITIONAL_EXPRESSION     go to state 151
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 152
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 123
+
+   40 CASE_STATEMENT: tDefault . tColon STATEMENTS
+
+    tColon  shift, and go to state 153
+
+
+State 124
+
+   38 IFELSE_STATEMENT: tSwitch . tLBracket IDENTIFIER tRBracket tOScope STATEMENTS tCScope
+
+    tLBracket  shift, and go to state 154
+
+
+State 125
+
+   10 FUNCTION: TYPES tIdentifier PARAMETERS tOScope STATEMENTS . tCScope
+   12 STATEMENTS: STATEMENTS . STATEMENT
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 155
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 126
+
+   11 STATEMENTS: STATEMENT .
+
+    $default  reduce using rule 11 (STATEMENTS)
+
+
+State 127
+
+   19 STATEMENT: DECLARATION_STATEMENT .
+
+    $default  reduce using rule 19 (STATEMENT)
+
+
+State 128
+
+   13 STATEMENT: ASSIGNMENT_STATEMENT .
+
+    $default  reduce using rule 13 (STATEMENT)
+
+
+State 129
+
+   14 STATEMENT: LOOP_STATEMENT .
+
+    $default  reduce using rule 14 (STATEMENT)
+
+
+State 130
+
+   15 STATEMENT: IFELSE_STATEMENT .
+
+    $default  reduce using rule 15 (STATEMENT)
+
+
+State 131
+
+   18 STATEMENT: CASE_STATEMENT .
+
+    $default  reduce using rule 18 (STATEMENT)
+
+
+State 132
+
+   16 STATEMENT: FUNCTION_CALL . tSemiColon
+
+    tSemiColon  shift, and go to state 157
+
+
+State 133
+
+   20 STATEMENT: ARRAY_DECL .
+
+    $default  reduce using rule 20 (STATEMENT)
+
+
+State 134
+
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION
+   30                     | IDENTIFIER . UNARY_OPERATORS tSemiColon
+   31                     | IDENTIFIER . UNARY_OPERATORS
+   72 FUNCTION_CALL: IDENTIFIER . tLBracket tRBracket
+   73              | IDENTIFIER . ARGUMENTS
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tLBracket       shift, and go to state 84
+    tPlusPlus       shift, and go to state 22
+    tMinusMinus     shift, and go to state 23
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    OPERATORS        go to state 31
+    UNARY_OPERATORS  go to state 32
+    ARGUMENTS        go to state 85
+
+
+State 135
+
+   17 STATEMENT: END_STATEMENT .
+
+    $default  reduce using rule 17 (STATEMENT)
+
+
+State 136
+
+   26 DECLARATION_STATEMENT: TYPES . IDENTIFIER tSemiColon
+   27 ASSIGNMENT_STATEMENT: TYPES . IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   75 ARRAY_DECL: TYPES . tIdentifier tLSBracket tIntegerConstant tRSBracket tSemiColon
+
+    tIdentifier  shift, and go to state 158
+
+    ARRAY_CALL  go to state 13
+    IDENTIFIER  go to state 34
+
+
+State 137
+
+   27 ASSIGNMENT_STATEMENT: TYPES IDENTIFIER OPERATORS CONDITIONAL_EXPRESSION tSemiColon .
+
+    $default  reduce using rule 27 (ASSIGNMENT_STATEMENT)
+
+
+State 138
+
+   25 ENUM_VARIABLES: ENUM_VARIABLES tComma ASSIGNMENT_STATEMENT .
+
+    $default  reduce using rule 25 (ENUM_VARIABLES)
+
+
+State 139
+
+   24 ENUM_VARIABLES: ENUM_VARIABLES tComma IDENTIFIER .
+   28 ASSIGNMENT_STATEMENT: IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION tSemiColon
+   29                     | IDENTIFIER . OPERATORS CONDITIONAL_EXPRESSION
+   30                     | IDENTIFIER . UNARY_OPERATORS tSemiColon
+   31                     | IDENTIFIER . UNARY_OPERATORS
+
+    tPipeEqual      shift, and go to state 20
+    tDivisionEqual  shift, and go to state 21
+    tPlusPlus       shift, and go to state 22
+    tMinusMinus     shift, and go to state 23
+    tMinusEqual     shift, and go to state 24
+    tPlusEqual      shift, and go to state 25
+    tModuloEqual    shift, and go to state 26
+    tMultiplyEqual  shift, and go to state 27
+    tEqual          shift, and go to state 28
+    tXorEqual       shift, and go to state 29
+    tAndEqual       shift, and go to state 30
+
+    $default  reduce using rule 24 (ENUM_VARIABLES)
+
+    OPERATORS        go to state 31
+    UNARY_OPERATORS  go to state 32
+
+
+State 140
+
+   21 ENUM_STATEMENT: tEnum tIdentifier tOScope ENUM_VARIABLES tCScope tSemiColon .
+
+    $default  reduce using rule 21 (ENUM_STATEMENT)
+
+
+State 141
+
+  103 ARGUMENTS: tLBracket ARGUMENTS_LIST tRBracket .
+
+    $default  reduce using rule 103 (ARGUMENTS)
+
+
+State 142
+
+  105 ARGUMENTS_LIST: ARGUMENTS_LIST tComma . CONDITIONAL_EXPRESSION
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    CONDITIONAL_EXPRESSION     go to state 159
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 51
+
+
+State 143
+
+  101 PARAMETERS_LIST: PARAMETERS_LIST tComma TYPES . tIdentifier
+
+    tIdentifier  shift, and go to state 160
+
+
+State 144
+
+   75 ARRAY_DECL: TYPES tIdentifier tLSBracket tIntegerConstant tRSBracket tSemiColon .
+
+    $default  reduce using rule 75 (ARRAY_DECL)
+
+
+State 145
+
+   34 LOOP_STATEMENT: tFor tLBracket . ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket . ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+
+    ASSIGNMENT_STATEMENT  go to state 161
+    ARRAY_CALL            go to state 13
+    IDENTIFIER            go to state 14
+    TYPES                 go to state 63
+
+
+State 146
+
+   32 LOOP_STATEMENT: tWhile tLBracket . CONDITION tRBracket tOScope STATEMENTS tCScope
+   33               | tWhile tLBracket . CONDITION tRBracket tOScope tCScope
+
+    tIdentifier       shift, and go to state 162
+    tIntegerConstant  shift, and go to state 163
+
+    CONDITION                  go to state 164
+    CONDITIONAL_EXPRESSION     go to state 165
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 166
+
+
+State 147
+
+  108 END_STATEMENT: tBreak tSemiColon .
+
+    $default  reduce using rule 108 (END_STATEMENT)
+
+
+State 148
+
+   39 CASE_STATEMENT: tCase PRIMARY_EXPRESSION . tColon STATEMENTS
+
+    tColon  shift, and go to state 167
+
+
+State 149
+
+  109 END_STATEMENT: tContinue tSemiColon .
+
+    $default  reduce using rule 109 (END_STATEMENT)
+
+
+State 150
+
+   36 IFELSE_STATEMENT: tIf tLBracket . CONDITION tRBracket tOScope STATEMENTS tCScope
+   37                 | tIf tLBracket . CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+
+    tIdentifier       shift, and go to state 162
+    tIntegerConstant  shift, and go to state 163
+
+    CONDITION                  go to state 168
+    CONDITIONAL_EXPRESSION     go to state 165
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 166
+
+
+State 151
+
+  106 END_STATEMENT: tReturn CONDITIONAL_EXPRESSION . tSemiColon
+
+    tSemiColon  shift, and go to state 169
+
+
+State 152
+
+   71 UNIT_EXPRESSION: FUNCTION_CALL .
+  107 END_STATEMENT: tReturn FUNCTION_CALL . tSemiColon
+
+    tSemiColon  shift, and go to state 170
+
+    tSemiColon  [reduce using rule 71 (UNIT_EXPRESSION)]
+    $default    reduce using rule 71 (UNIT_EXPRESSION)
+
+
+State 153
+
+   40 CASE_STATEMENT: tDefault tColon . STATEMENTS
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 171
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 154
+
+   38 IFELSE_STATEMENT: tSwitch tLBracket . IDENTIFIER tRBracket tOScope STATEMENTS tCScope
+
+    tIdentifier  shift, and go to state 2
+
+    ARRAY_CALL  go to state 13
+    IDENTIFIER  go to state 172
+
+
+State 155
+
+   10 FUNCTION: TYPES tIdentifier PARAMETERS tOScope STATEMENTS tCScope .
+
+    $default  reduce using rule 10 (FUNCTION)
+
+
+State 156
+
+   12 STATEMENTS: STATEMENTS STATEMENT .
+
+    $default  reduce using rule 12 (STATEMENTS)
+
+
+State 157
+
+   16 STATEMENT: FUNCTION_CALL tSemiColon .
+
+    $default  reduce using rule 16 (STATEMENT)
+
+
+State 158
+
+   75 ARRAY_DECL: TYPES tIdentifier . tLSBracket tIntegerConstant tRSBracket tSemiColon
+   76 ARRAY_CALL: tIdentifier . tLSBracket tIntegerConstant tRSBracket
+   78 IDENTIFIER: tIdentifier .
+
+    tLSBracket  shift, and go to state 54
+
+    $default  reduce using rule 78 (IDENTIFIER)
+
+
+State 159
+
+  105 ARGUMENTS_LIST: ARGUMENTS_LIST tComma CONDITIONAL_EXPRESSION .
+
+    $default  reduce using rule 105 (ARGUMENTS_LIST)
+
+
+State 160
+
+  101 PARAMETERS_LIST: PARAMETERS_LIST tComma TYPES tIdentifier .
+
+    $default  reduce using rule 101 (PARAMETERS_LIST)
+
+
+State 161
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT . CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT . CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+    tIdentifier       shift, and go to state 162
+    tIntegerConstant  shift, and go to state 163
+
+    CONDITION                  go to state 173
+    CONDITIONAL_EXPRESSION     go to state 165
+    BOOLEAN_OR                 go to state 39
+    BOOLEAN_AND                go to state 40
+    BOOL_EXPRESSION            go to state 41
+    BITWISE_OR                 go to state 42
+    BITWISE_XOR                go to state 43
+    BITWISE_AND                go to state 44
+    SHIFT_EXPRESSION           go to state 45
+    PLUS_MINUS_EXPRESSION      go to state 46
+    MULTIPLICATIVE_EXPRESSION  go to state 47
+    UNIT_EXPRESSION            go to state 48
+    FUNCTION_CALL              go to state 49
+    ARRAY_CALL                 go to state 13
+    PRIMARY_EXPRESSION         go to state 50
+    IDENTIFIER                 go to state 166
+
+
+State 162
+
+   43 CONDITION: tIdentifier .
+   76 ARRAY_CALL: tIdentifier . tLSBracket tIntegerConstant tRSBracket
+   78 IDENTIFIER: tIdentifier .
+
+    tLSBracket  shift, and go to state 16
+
+    tRBracket   reduce using rule 43 (CONDITION)
+    tRBracket   [reduce using rule 78 (IDENTIFIER)]
+    tSemiColon  reduce using rule 43 (CONDITION)
+    tSemiColon  [reduce using rule 78 (IDENTIFIER)]
+    $default    reduce using rule 78 (IDENTIFIER)
+
+
+State 163
+
+   44 CONDITION: tIntegerConstant .
+   77 PRIMARY_EXPRESSION: tIntegerConstant .
+
+    tRBracket   reduce using rule 44 (CONDITION)
+    tRBracket   [reduce using rule 77 (PRIMARY_EXPRESSION)]
+    tSemiColon  reduce using rule 44 (CONDITION)
+    tSemiColon  [reduce using rule 77 (PRIMARY_EXPRESSION)]
+    $default    reduce using rule 77 (PRIMARY_EXPRESSION)
+
+
+State 164
+
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION . tRBracket tOScope STATEMENTS tCScope
+   33               | tWhile tLBracket CONDITION . tRBracket tOScope tCScope
+
+    tRBracket  shift, and go to state 174
+
+
+State 165
+
+   45 CONDITION: CONDITIONAL_EXPRESSION .
+
+    $default  reduce using rule 45 (CONDITION)
+
+
+State 166
+
+   41 CONDITION: IDENTIFIER . CONDITIONERS PRIMARY_EXPRESSION
+   42          | IDENTIFIER . CONDITIONERS IDENTIFIER
+   70 UNIT_EXPRESSION: IDENTIFIER .
+   72 FUNCTION_CALL: IDENTIFIER . tLBracket tRBracket
+   73              | IDENTIFIER . ARGUMENTS
+
+    tLBracket     shift, and go to state 84
+    tMore         shift, and go to state 67
+    tExMarkEqual  shift, and go to state 68
+    tEqualEqual   shift, and go to state 69
+    tMoreEqual    shift, and go to state 70
+    tLessEqual    shift, and go to state 71
+    tLess         shift, and go to state 72
+
+    tMore         [reduce using rule 70 (UNIT_EXPRESSION)]
+    tExMarkEqual  [reduce using rule 70 (UNIT_EXPRESSION)]
+    tEqualEqual   [reduce using rule 70 (UNIT_EXPRESSION)]
+    tMoreEqual    [reduce using rule 70 (UNIT_EXPRESSION)]
+    tLessEqual    [reduce using rule 70 (UNIT_EXPRESSION)]
+    tLess         [reduce using rule 70 (UNIT_EXPRESSION)]
+    $default      reduce using rule 70 (UNIT_EXPRESSION)
+
+    CONDITIONERS  go to state 175
+    ARGUMENTS     go to state 85
+
+
+State 167
+
+   39 CASE_STATEMENT: tCase PRIMARY_EXPRESSION tColon . STATEMENTS
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 176
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 168
+
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION . tRBracket tOScope STATEMENTS tCScope
+   37                 | tIf tLBracket CONDITION . tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+
+    tRBracket  shift, and go to state 177
+
+
+State 169
+
+  106 END_STATEMENT: tReturn CONDITIONAL_EXPRESSION tSemiColon .
+
+    $default  reduce using rule 106 (END_STATEMENT)
+
+
+State 170
+
+  107 END_STATEMENT: tReturn FUNCTION_CALL tSemiColon .
+
+    $default  reduce using rule 107 (END_STATEMENT)
+
+
+State 171
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   40 CASE_STATEMENT: tDefault tColon STATEMENTS .
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    tInt         [reduce using rule 40 (CASE_STATEMENT)]
+    tIdentifier  [reduce using rule 40 (CASE_STATEMENT)]
+    tFor         [reduce using rule 40 (CASE_STATEMENT)]
+    tWhile       [reduce using rule 40 (CASE_STATEMENT)]
+    tBreak       [reduce using rule 40 (CASE_STATEMENT)]
+    tCase        [reduce using rule 40 (CASE_STATEMENT)]
+    tContinue    [reduce using rule 40 (CASE_STATEMENT)]
+    tIf          [reduce using rule 40 (CASE_STATEMENT)]
+    tReturn      [reduce using rule 40 (CASE_STATEMENT)]
+    tDefault     [reduce using rule 40 (CASE_STATEMENT)]
+    tSwitch      [reduce using rule 40 (CASE_STATEMENT)]
+    $default     reduce using rule 40 (CASE_STATEMENT)
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 172
+
+   38 IFELSE_STATEMENT: tSwitch tLBracket IDENTIFIER . tRBracket tOScope STATEMENTS tCScope
+
+    tRBracket  shift, and go to state 178
+
+
+State 173
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION . tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION . tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+    tSemiColon  shift, and go to state 179
+
+
+State 174
+
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket . tOScope STATEMENTS tCScope
+   33               | tWhile tLBracket CONDITION tRBracket . tOScope tCScope
+
+    tOScope  shift, and go to state 180
+
+
+State 175
+
+   41 CONDITION: IDENTIFIER CONDITIONERS . PRIMARY_EXPRESSION
+   42          | IDENTIFIER CONDITIONERS . IDENTIFIER
+
+    tIdentifier       shift, and go to state 2
+    tIntegerConstant  shift, and go to state 37
+
+    ARRAY_CALL          go to state 13
+    PRIMARY_EXPRESSION  go to state 181
+    IDENTIFIER          go to state 182
+
+
+State 176
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   39 CASE_STATEMENT: tCase PRIMARY_EXPRESSION tColon STATEMENTS .
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    tInt         [reduce using rule 39 (CASE_STATEMENT)]
+    tIdentifier  [reduce using rule 39 (CASE_STATEMENT)]
+    tFor         [reduce using rule 39 (CASE_STATEMENT)]
+    tWhile       [reduce using rule 39 (CASE_STATEMENT)]
+    tBreak       [reduce using rule 39 (CASE_STATEMENT)]
+    tCase        [reduce using rule 39 (CASE_STATEMENT)]
+    tContinue    [reduce using rule 39 (CASE_STATEMENT)]
+    tIf          [reduce using rule 39 (CASE_STATEMENT)]
+    tReturn      [reduce using rule 39 (CASE_STATEMENT)]
+    tDefault     [reduce using rule 39 (CASE_STATEMENT)]
+    tSwitch      [reduce using rule 39 (CASE_STATEMENT)]
+    $default     reduce using rule 39 (CASE_STATEMENT)
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 177
+
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket . tOScope STATEMENTS tCScope
+   37                 | tIf tLBracket CONDITION tRBracket . tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+
+    tOScope  shift, and go to state 183
+
+
+State 178
+
+   38 IFELSE_STATEMENT: tSwitch tLBracket IDENTIFIER tRBracket . tOScope STATEMENTS tCScope
+
+    tOScope  shift, and go to state 184
+
+
+State 179
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon . ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon . ASSIGNMENT_STATEMENT tRBracket tOScope tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+
+    ASSIGNMENT_STATEMENT  go to state 185
+    ARRAY_CALL            go to state 13
+    IDENTIFIER            go to state 14
+    TYPES                 go to state 63
+
+
+State 180
+
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket tOScope . STATEMENTS tCScope
+   33               | tWhile tLBracket CONDITION tRBracket tOScope . tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 186
+
+    STATEMENTS             go to state 187
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 181
+
+   41 CONDITION: IDENTIFIER CONDITIONERS PRIMARY_EXPRESSION .
+
+    $default  reduce using rule 41 (CONDITION)
+
+
+State 182
+
+   42 CONDITION: IDENTIFIER CONDITIONERS IDENTIFIER .
+
+    $default  reduce using rule 42 (CONDITION)
+
+
+State 183
+
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope . STATEMENTS tCScope
+   37                 | tIf tLBracket CONDITION tRBracket tOScope . STATEMENTS tCScope tElse tOScope STATEMENTS tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 188
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 184
+
+   38 IFELSE_STATEMENT: tSwitch tLBracket IDENTIFIER tRBracket tOScope . STATEMENTS tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 189
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 185
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT . tRBracket tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT . tRBracket tOScope tCScope
+
+    tRBracket  shift, and go to state 190
+
+
+State 186
+
+   33 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket tOScope tCScope .
+
+    $default  reduce using rule 33 (LOOP_STATEMENT)
+
+
+State 187
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket tOScope STATEMENTS . tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 191
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 188
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS . tCScope
+   37                 | tIf tLBracket CONDITION tRBracket tOScope STATEMENTS . tCScope tElse tOScope STATEMENTS tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 192
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 189
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   38 IFELSE_STATEMENT: tSwitch tLBracket IDENTIFIER tRBracket tOScope STATEMENTS . tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 193
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 190
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket . tOScope STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket . tOScope tCScope
+
+    tOScope  shift, and go to state 194
+
+
+State 191
+
+   32 LOOP_STATEMENT: tWhile tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope .
+
+    $default  reduce using rule 32 (LOOP_STATEMENT)
+
+
+State 192
+
+   36 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope .
+   37                 | tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope . tElse tOScope STATEMENTS tCScope
+
+    tElse  shift, and go to state 195
+
+    $default  reduce using rule 36 (IFELSE_STATEMENT)
+
+
+State 193
+
+   38 IFELSE_STATEMENT: tSwitch tLBracket IDENTIFIER tRBracket tOScope STATEMENTS tCScope .
+
+    $default  reduce using rule 38 (IFELSE_STATEMENT)
+
+
+State 194
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope . STATEMENT tCScope
+   35               | tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope . tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 196
+
+    STATEMENT              go to state 197
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 195
+
+   37 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse . tOScope STATEMENTS tCScope
+
+    tOScope  shift, and go to state 198
+
+
+State 196
+
+   35 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope tCScope .
+
+    $default  reduce using rule 35 (LOOP_STATEMENT)
+
+
+State 197
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT . tCScope
+
+    tCScope  shift, and go to state 199
+
+
+State 198
+
+   37 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope . STATEMENTS tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+
+    STATEMENTS             go to state 200
+    STATEMENT              go to state 126
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 199
+
+   34 LOOP_STATEMENT: tFor tLBracket ASSIGNMENT_STATEMENT CONDITION tSemiColon ASSIGNMENT_STATEMENT tRBracket tOScope STATEMENT tCScope .
+
+    $default  reduce using rule 34 (LOOP_STATEMENT)
+
+
+State 200
+
+   12 STATEMENTS: STATEMENTS . STATEMENT
+   37 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS . tCScope
+
+    tInt         shift, and go to state 1
+    tIdentifier  shift, and go to state 2
+    tFor         shift, and go to state 116
+    tWhile       shift, and go to state 117
+    tBreak       shift, and go to state 118
+    tCase        shift, and go to state 119
+    tContinue    shift, and go to state 120
+    tIf          shift, and go to state 121
+    tReturn      shift, and go to state 122
+    tDefault     shift, and go to state 123
+    tSwitch      shift, and go to state 124
+    tCScope      shift, and go to state 201
+
+    STATEMENT              go to state 156
+    DECLARATION_STATEMENT  go to state 127
+    ASSIGNMENT_STATEMENT   go to state 128
+    LOOP_STATEMENT         go to state 129
+    IFELSE_STATEMENT       go to state 130
+    CASE_STATEMENT         go to state 131
+    FUNCTION_CALL          go to state 132
+    ARRAY_DECL             go to state 133
+    ARRAY_CALL             go to state 13
+    IDENTIFIER             go to state 134
+    END_STATEMENT          go to state 135
+    TYPES                  go to state 136
+
+
+State 201
+
+   37 IFELSE_STATEMENT: tIf tLBracket CONDITION tRBracket tOScope STATEMENTS tCScope tElse tOScope STATEMENTS tCScope .
+
+    $default  reduce using rule 37 (IFELSE_STATEMENT)
